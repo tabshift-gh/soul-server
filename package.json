@@ -1,5 +1,5 @@
 {
-	"name": "soul-cli",
+	"name": "@tabshift/soul-cli",
 	"version": "0.8.1",
 	"description": "A SQLite REST and Realtime server",
 	"main": "src/server.js",
@@ -18,14 +18,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/thevahidal/soul.git"
+		"url": "git+https://github.com/tabshift-gh/soul-server.git"
 	},
-	"author": "Vahid Al @thevahidal",
+	"author": "T. R. Bernstein @trbernstein",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/thevahidal/soul/issues"
+		"url": "https://github.com/tabshift-gh/soul-server/issues"
 	},
-	"homepage": "https://github.com/thevahidal/soul#readme",
+	"homepage": "https://github.com/tabshift-gh/soul-server#readme",
 	"dependencies": {
 		"bcrypt": "^5.1.1",
 		"better-sqlite3": "^8.1.0",

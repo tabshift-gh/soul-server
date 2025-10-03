@@ -5,8 +5,10 @@
     </p>
 </p>
 
-[![justforfunnoreally.dev badge](https://img.shields.io/badge/justforfunnoreally-dev-9ff)](https://justforfunnoreally.dev)
-[![All Contributors](https://img.shields.io/github/all-contributors/thevahidal/soul?color=ee8449&style=flat-square)](#contributors)
+> [!NOTE]
+> This repository is a fork of [thevahidal/soul][]. A
+
+[thevahidal/soul]: https://github.com/thevahidal/soul
 
 ## Usage
 
@@ -214,30 +216,18 @@ Contributions are always welcome!
 
 See `CONTRIBUTING.md` for ways to get started and please adhere to `CODE OF CONDUCT`.
 
-## Contributors ✨
+## Original Contributors ✨
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+A huge thanks to these wonderful people:
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://linktr.ee/thevahidal"><img src="https://avatars.githubusercontent.com/u/20302825?v=4?s=100" width="100px;" alt="Vahid Al"/><br /><sub><b>Vahid Al</b></sub></a><br /><a href="https://github.com/thevahidal/soul/commits?author=thevahidal" title="Code">💻</a> <a href="https://github.com/thevahidal/soul/pulls?q=is%3Apr+reviewed-by%3Athevahidal" title="Reviewed Pull Requests">👀</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AbegaM"><img src="https://avatars.githubusercontent.com/u/70259638?v=4?s=100" width="100px;" alt="Abenezer Melkamu"/><br /><sub><b>Abenezer Melkamu</b></sub></a><br /><a href="https://github.com/thevahidal/soul/commits?author=AbegaM" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/IanMayo"><img src="https://avatars.githubusercontent.com/u/1108513?v=4?s=100" width="100px;" alt="Ian Mayo"/><br /><sub><b>Ian Mayo</b></sub></a><br /><a href="https://github.com/thevahidal/soul/commits?author=IanMayo" title="Code">💻</a> <a href="https://github.com/thevahidal/soul/pulls?q=is%3Apr+reviewed-by%3AIanMayo" title="Reviewed Pull Requests">👀</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://godot.id"><img src="https://avatars.githubusercontent.com/u/40712686?v=4?s=100" width="100px;" alt="Hanz"/><br /><sub><b>Hanz</b></sub></a><br /><a href="https://github.com/thevahidal/soul/commits?author=HanzCEO" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/KoenDG"><img src="https://avatars.githubusercontent.com/u/1440619?v=4?s=100" width="100px;" alt="Koen De Groote"/><br /><sub><b>Koen De Groote</b></sub></a><br /><a href="https://github.com/thevahidal/soul/commits?author=KoenDG" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/TahaKhanAbdalli"><img src="https://avatars.githubusercontent.com/u/50602678?v=4?s=100" width="100px;" alt="Muhammad Taha Khan"/><br /><sub><b>Muhammad Taha Khan</b></sub></a><br /><a href="https://github.com/thevahidal/soul/commits?author=TahaKhanAbdalli" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://thoughtsunificator.me"><img src="https://avatars.githubusercontent.com/u/85041649?v=4?s=100" width="100px;" alt="Romain Lebesle"/><br /><sub><b>Romain Lebesle</b></sub></a><br /><a href="https://github.com/thevahidal/soul/commits?author=thoughtsunificator" title="Code">💻</a></td>
-    </tr>
-  </tbody>
-</table>
+| Name                                                     | Contribution Types |
+| -------------------------------------------------------- | ------------------ |
+| [Vahid Al](http://linktr.ee/thevahidal)                  | 💻👀               |
+| [Abenezer Melkamu](https://github.com/AbegaM)            | 💻                 |
+| [Ian Mayo](https://github.com/IanMayo)                   | 💻👀               |
+| [Hanz](https://godot.id)                                 | 💻                 |
+| [Koen De Groote](https://github.com/KoenDG)              | 💻                 |
+| [Muhammad Taha Khan](https://github.com/TahaKhanAbdalli) | 💻                 |
+| [Romain Lebesle](http://thoughtsunificator.me)           | 💻                 |
 
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification.
+_Caption: 💻 = Code, 👀 = Reviewed Pull Requests_
