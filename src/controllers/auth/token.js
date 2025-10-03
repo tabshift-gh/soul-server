@@ -1,19 +1,14 @@
-const { authService } = require('../../services');
-const { responseMessages, authConstants } = require('../../constants');
-const config = require('../../config');
-const {
-  comparePasswords,
-  generateToken,
-  decodeToken,
-  toBoolean,
-} = require('../../utils');
+const { authService } = require('../../services')
+const { responseMessages, authConstants } = require('../../constants')
+const config = require('../../config')
+const { comparePasswords, generateToken, decodeToken, toBoolean } = require('../../utils')
 
-const { successMessage, errorMessage } = responseMessages;
+const { successMessage, errorMessage } = responseMessages
 
 const obtainAccessToken = async (req, res) => {
-  /* 	
+	/*
     #swagger.tags = ['Auth']
-    #swagger.summary = 'Obtain Access Token' 
+    #swagger.summary = 'Obtain Access Token'
     #swagger.description = 'Endpoint to generate access and refresh tokens'
 
      #swagger.parameters['body'] = {
@@ -24,28 +19,24 @@ const obtainAccessToken = async (req, res) => {
     }
   */
 
-  // extract payload
-  const { username, password } = req.body.fields;
+	// extract payload
+	const { username, password } = req.body.fields
 
-  try {
-    // check if the username exists in the Db
-    const users = authService.getUsersByUsername({ username });
+	try {
+		// check if the username exists in the Db
+		const users = authService.getUsersByUsername({ username })
 
-    if (users.length <= 0) {
-      return res
-        .status(401)
-        .send({ message: errorMessage.INVALID_USERNAME_PASSWORD_ERROR });
-    }
+		if (users.length <= 0) {
+			return res.status(401).send({ message: errorMessage.INVALID_USERNAME_PASSWORD_ERROR })
+		}
 
-    // check if the password is valid
-    const user = users[0];
-    const isMatch = await comparePasswords(password, user.hashed_password);
+		// check if the password is valid
+		const user = users[0]
+		const isMatch = await comparePasswords(password, user.hashed_password)
 
-    if (!isMatch) {
-      return res
-        .status(401)
-        .send({ message: errorMessage.INVALID_USERNAME_PASSWORD_ERROR });
-      /*
+		if (!isMatch) {
+			return res.status(401).send({ message: errorMessage.INVALID_USERNAME_PASSWORD_ERROR })
+			/*
       #swagger.responses[401] = {
         description: 'Invalid username or password error',
         schema: {
@@ -53,61 +44,53 @@ const obtainAccessToken = async (req, res) => {
         }
       }
     */
-    }
+		}
 
-    let roleIds;
+		let roleIds
 
-    // if the user is not a superuser get the role and its permission from the DB
-    if (!toBoolean(user.is_superuser)) {
-      try {
-        const roleData = getUsersRoleAndPermission({
-          userId: user.id,
-          res,
-        });
+		// if the user is not a superuser get the role and its permission from the DB
+		if (!toBoolean(user.is_superuser)) {
+			try {
+				const roleData = getUsersRoleAndPermission({
+					userId: user.id,
+					res
+				})
 
-        roleIds = roleData.roleIds;
-      } catch (err) {
-        return res
-          .status(401)
-          .send({ message: errorMessage.ROLE_NOT_FOUND_ERROR });
-      }
-    }
+				roleIds = roleData.roleIds
+			} catch (err) {
+				return res.status(401).send({ message: errorMessage.ROLE_NOT_FOUND_ERROR })
+			}
+		}
 
-    const payload = {
-      username: user.username,
-      userId: user.id,
-      isSuperuser: user.is_superuser,
-      roleIds,
-    };
+		const payload = {
+			username: user.username,
+			userId: user.id,
+			isSuperuser: user.is_superuser,
+			roleIds
+		}
 
-    // generate an access token
-    const accessToken = await generateToken(
-      { subject: authConstants.ACCESS_TOKEN_SUBJECT, ...payload },
-      config.tokenSecret,
-      config.accessTokenExpirationTime,
-    );
+		// generate an access token
+		const accessToken = await generateToken(
+			{ subject: authConstants.ACCESS_TOKEN_SUBJECT, ...payload },
+			config.tokenSecret,
+			config.accessTokenExpirationTime
+		)
 
-    // generate a refresh token
-    const refreshToken = await generateToken(
-      { subject: authConstants.REFRESH_TOKEN_SUBJECT, ...payload },
-      config.tokenSecret,
-      config.refreshTokenExpirationTime,
-    );
+		// generate a refresh token
+		const refreshToken = await generateToken(
+			{ subject: authConstants.REFRESH_TOKEN_SUBJECT, ...payload },
+			config.tokenSecret,
+			config.refreshTokenExpirationTime
+		)
 
-    // set the token in the cookie
-    let cookieOptions = { httpOnly: true, secure: false, Path: '/' };
-    res.cookie(authConstants.ACCESS_TOKEN_SUBJECT, accessToken, cookieOptions);
-    res.cookie(
-      authConstants.REFRESH_TOKEN_SUBJECT,
-      refreshToken,
-      cookieOptions,
-    );
+		// set the token in the cookie
+		let cookieOptions = { httpOnly: true, secure: false, Path: '/' }
+		res.cookie(authConstants.ACCESS_TOKEN_SUBJECT, accessToken, cookieOptions)
+		res.cookie(authConstants.REFRESH_TOKEN_SUBJECT, refreshToken, cookieOptions)
 
-    res
-      .status(201)
-      .send({ message: successMessage.SUCCESS, data: { userId: user.id } });
+		res.status(201).send({ message: successMessage.SUCCESS, data: { userId: user.id } })
 
-    /*
+		/*
       #swagger.responses[201] = {
         description: 'Access token and Refresh token generated',
         schema: {
@@ -115,45 +98,38 @@ const obtainAccessToken = async (req, res) => {
         }
       }
     */
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: errorMessage.SERVER_ERROR,
-    });
-  }
-};
+	} catch (error) {
+		console.log(error)
+		return res.status(500).json({
+			message: errorMessage.SERVER_ERROR
+		})
+	}
+}
 
 const refreshAccessToken = async (req, res) => {
-  /* 	
+	/*
     #swagger.tags = ['Auth']
-    #swagger.summary = 'Refresh Access Token' 
+    #swagger.summary = 'Refresh Access Token'
     #swagger.description = 'Endpoint to refresh access and refresh tokens'
   */
-  const refreshTokenFromCookies = req.cookies.refreshToken;
+	const refreshTokenFromCookies = req.cookies.refreshToken
 
-  try {
-    // check if the refresh token is revoked
-    if (isRefreshTokenRevoked({ refreshToken: refreshTokenFromCookies })) {
-      return res
-        .status(403)
-        .send({ message: errorMessage.INVALID_REFRESH_TOKEN_ERROR });
-    }
+	try {
+		// check if the refresh token is revoked
+		if (isRefreshTokenRevoked({ refreshToken: refreshTokenFromCookies })) {
+			return res.status(403).send({ message: errorMessage.INVALID_REFRESH_TOKEN_ERROR })
+		}
 
-    // extract the payload from the token and verify it
-    const payload = await decodeToken(
-      refreshTokenFromCookies,
-      config.tokenSecret,
-    );
+		// extract the payload from the token and verify it
+		const payload = await decodeToken(refreshTokenFromCookies, config.tokenSecret)
 
-    // find the user
-    const users = authService.getUsersById({ userId: payload.userId });
+		// find the user
+		const users = authService.getUsersById({ userId: payload.userId })
 
-    if (users.length <= 0) {
-      return res
-        .status(401)
-        .send({ message: errorMessage.USER_NOT_FOUND_ERROR });
+		if (users.length <= 0) {
+			return res.status(401).send({ message: errorMessage.USER_NOT_FOUND_ERROR })
 
-      /*
+			/*
       #swagger.responses[401] = {
         description: 'User not found error',
         schema: {
@@ -161,61 +137,53 @@ const refreshAccessToken = async (req, res) => {
         }
       }
     */
-    }
+		}
 
-    let roleIds;
-    const user = users[0];
+		let roleIds
+		const user = users[0]
 
-    // if the user is not a superuser get the role and its permission from the DB
-    if (!toBoolean(user.is_superuser)) {
-      try {
-        const roleData = getUsersRoleAndPermission({
-          userId: user.id,
-        });
+		// if the user is not a superuser get the role and its permission from the DB
+		if (!toBoolean(user.is_superuser)) {
+			try {
+				const roleData = getUsersRoleAndPermission({
+					userId: user.id
+				})
 
-        roleIds = roleData.roleIds;
-      } catch (err) {
-        return res
-          .status(401)
-          .send({ message: errorMessage.ROLE_NOT_FOUND_ERROR });
-      }
-    }
+				roleIds = roleData.roleIds
+			} catch (err) {
+				return res.status(401).send({ message: errorMessage.ROLE_NOT_FOUND_ERROR })
+			}
+		}
 
-    const newPayload = {
-      username: user.username,
-      userId: user.id,
-      isSuperuser: user.is_superuser,
-      roleIds,
-    };
+		const newPayload = {
+			username: user.username,
+			userId: user.id,
+			isSuperuser: user.is_superuser,
+			roleIds
+		}
 
-    // generate an access token
-    const accessToken = await generateToken(
-      { subject: authConstants.ACCESS_TOKEN_SUBJECT, ...newPayload },
-      config.tokenSecret,
-      config.accessTokenExpirationTime,
-    );
+		// generate an access token
+		const accessToken = await generateToken(
+			{ subject: authConstants.ACCESS_TOKEN_SUBJECT, ...newPayload },
+			config.tokenSecret,
+			config.accessTokenExpirationTime
+		)
 
-    // generate a refresh token
-    const refreshToken = await generateToken(
-      { subject: authConstants.REFRESH_TOKEN_SUBJECT, ...newPayload },
-      config.tokenSecret,
-      config.refreshTokenExpirationTime,
-    );
+		// generate a refresh token
+		const refreshToken = await generateToken(
+			{ subject: authConstants.REFRESH_TOKEN_SUBJECT, ...newPayload },
+			config.tokenSecret,
+			config.refreshTokenExpirationTime
+		)
 
-    // set the token in the cookie
-    let cookieOptions = { httpOnly: true, secure: false, Path: '/' };
-    res.cookie(authConstants.ACCESS_TOKEN_SUBJECT, accessToken, cookieOptions);
-    res.cookie(
-      authConstants.REFRESH_TOKEN_SUBJECT,
-      refreshToken,
-      cookieOptions,
-    );
+		// set the token in the cookie
+		let cookieOptions = { httpOnly: true, secure: false, Path: '/' }
+		res.cookie(authConstants.ACCESS_TOKEN_SUBJECT, accessToken, cookieOptions)
+		res.cookie(authConstants.REFRESH_TOKEN_SUBJECT, refreshToken, cookieOptions)
 
-    res
-      .status(200)
-      .send({ message: successMessage.SUCCESS, data: { userId: user.id } });
+		res.status(200).send({ message: successMessage.SUCCESS, data: { userId: user.id } })
 
-    /*
+		/*
       #swagger.responses[200] = {
         description: 'Access token refreshed',
         schema: {
@@ -223,9 +191,9 @@ const refreshAccessToken = async (req, res) => {
         }
       }
     */
-  } catch (error) {
-    res.status(403).send({ message: errorMessage.INVALID_REFRESH_TOKEN_ERROR });
-    /*
+	} catch (error) {
+		res.status(403).send({ message: errorMessage.INVALID_REFRESH_TOKEN_ERROR })
+		/*
       #swagger.responses[401] = {
         description: 'Invalid refresh token error',
         schema: {
@@ -233,37 +201,35 @@ const refreshAccessToken = async (req, res) => {
         }
       }
     */
-  }
-};
+	}
+}
 
 const removeTokens = async (req, res) => {
-  /*
+	/*
     #swagger.tags = ['Auth']
     #swagger.summary = 'Remove Tokens'
     #swagger.description = 'Endpoint to remove access and refresh tokens'
   */
 
-  const refreshToken = req.cookies.refreshToken;
+	const refreshToken = req.cookies.refreshToken
 
-  try {
-    // decode the token
-    const payload = await decodeToken(refreshToken, config.tokenSecret);
+	try {
+		// decode the token
+		const payload = await decodeToken(refreshToken, config.tokenSecret)
 
-    // store the refresh token in the _revoked_refresh_tokens table
-    authService.saveRevokedRefreshToken({
-      refreshToken,
-      expiresAt: payload.exp,
-    });
+		// store the refresh token in the _revoked_refresh_tokens table
+		authService.saveRevokedRefreshToken({
+			refreshToken,
+			expiresAt: payload.exp
+		})
 
-    // remove the token from the cookie
-    res.clearCookie(authConstants.ACCESS_TOKEN_SUBJECT);
-    res.clearCookie(authConstants.REFRESH_TOKEN_SUBJECT);
+		// remove the token from the cookie
+		res.clearCookie(authConstants.ACCESS_TOKEN_SUBJECT)
+		res.clearCookie(authConstants.REFRESH_TOKEN_SUBJECT)
 
-    res
-      .status(200)
-      .send({ message: responseMessages.successMessage.LOGOUT_MESSAGE });
+		res.status(200).send({ message: responseMessages.successMessage.LOGOUT_MESSAGE })
 
-    /*
+		/*
       #swagger.responses[200] = {
         description: 'Tokens Removed',
         schema: {
@@ -271,40 +237,40 @@ const removeTokens = async (req, res) => {
         }
       }
     */
-  } catch (error) {
-    res.status(500).send({ message: errorMessage.SERVER_ERROR });
-  }
-};
+	} catch (error) {
+		res.status(500).send({ message: errorMessage.SERVER_ERROR })
+	}
+}
 
 const removeRevokedRefreshTokens = () => {
-  authService.deleteRevokedRefreshTokens({
-    lookupField: `WHERE expires_at < CURRENT_TIMESTAMP`,
-  });
-};
+	authService.deleteRevokedRefreshTokens({
+		lookupField: `WHERE expires_at < CURRENT_TIMESTAMP`
+	})
+}
 
 const getUsersRoleAndPermission = ({ userId }) => {
-  const userRoles = authService.getUserRoleByUserId({ userId });
+	const userRoles = authService.getUserRoleByUserId({ userId })
 
-  if (userRoles.length <= 0) {
-    throw new Error(errorMessage.ROLE_NOT_FOUND_ERROR);
-  }
+	if (userRoles.length <= 0) {
+		throw new Error(errorMessage.ROLE_NOT_FOUND_ERROR)
+	}
 
-  const roleIds = userRoles.map((role) => role.role_id);
+	const roleIds = userRoles.map((role) => role.role_id)
 
-  // get the permission of the role
-  const permissions = authService.getPermissionByRoleIds({ roleIds });
+	// get the permission of the role
+	const permissions = authService.getPermissionByRoleIds({ roleIds })
 
-  return { userRoles, roleIds, permissions };
-};
+	return { userRoles, roleIds, permissions }
+}
 
 const isRefreshTokenRevoked = ({ refreshToken }) => {
-  const tokens = authService.getRevokedRefreshToken({ refreshToken });
-  return tokens.length > 0;
-};
+	const tokens = authService.getRevokedRefreshToken({ refreshToken })
+	return tokens.length > 0
+}
 
 module.exports = {
-  obtainAccessToken,
-  refreshAccessToken,
-  removeTokens,
-  removeRevokedRefreshTokens,
-};
+	obtainAccessToken,
+	refreshAccessToken,
+	removeTokens,
+	removeRevokedRefreshTokens
+}

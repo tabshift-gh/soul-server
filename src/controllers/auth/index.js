@@ -1,6 +1,6 @@
-const users = require('./user');
-const token = require('./token');
-const tables = require('./tables');
-const { checkAuthConfigs } = require('./common');
+const users = require('./user')
+const token = require('./token')
+const tables = require('./tables')
+const { checkAuthConfigs } = require('./common')
 
-module.exports = { ...users, ...token, ...tables, checkAuthConfigs };
+module.exports = { ...users, ...token, ...tables, checkAuthConfigs }

@@ -6,7 +6,6 @@ Soul extensions are a way to extend the functionality of Soul. Extensions are wr
 
 - API Extensions: Add new endpoints to Soul
 
-
 ## Setup Environment
 
 To follow the below examples we need to download a sample database and also install Soul CLI.
@@ -18,6 +17,7 @@ wget https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDa
 ```
 
 ### Using Soul CLI
+
 ```bash
 npm install -g soul-cli
 soul -d ./Chinook_Sqlite.sqlite -p 8000 -e "/absolute/path/to/_extensions/"
@@ -32,8 +32,8 @@ npm install # Install dependencies
 npm link # might need `sudo`
 soul -d ./Chinook_Sqlite.sqlite -p 8000 -e "/absolute/path/to/_extensions/"
 ```
-</details>
 
+</details>
 
 ## Creating an API extension
 
@@ -45,65 +45,64 @@ const hello = {
   path: '/api/hello-soul',
   handler: (req, res, db) => {
     res.status(200).json({
-        message: 'Hello Soul!'
-    });
-  },
-};
+      message: 'Hello Soul!'
+    })
+  }
+}
 
 const timestamp = {
   method: 'GET',
   path: '/api/timestamp',
   handler: (req, res, db) => {
     res.status(200).json({
-        timestamp: Date.now(),
-    });
-  },
-};
+      timestamp: Date.now()
+    })
+  }
+}
 
 const greetings = {
   method: 'POST',
   path: '/api/greetings/:name',
   handler: (req, res, db) => {
-    const { name } = req.params;
-    const { greeting } = req.body;
+    const { name } = req.params
+    const { greeting } = req.body
     res.status(200).json({
-        message: `${greeting} ${name}!`,
-    });
-  },
+      message: `${greeting} ${name}!`
+    })
+  }
 }
 
 const searchTables = {
   method: 'GET',
   path: '/api/search-tables',
   handler: (req, res, db) => {
-    const { q } = req.query;
+    const { q } = req.query
     const sql = `
       SELECT name FROM sqlite_master
       WHERE type='table'
       AND name LIKE $searchQuery
-    `;
+    `
     try {
       const tables = db.prepare(sql).all({
-        searchQuery: `%${q}%`,
-      });
+        searchQuery: `%${q}%`
+      })
       res.status(200).json({
-        tables,
-      });
+        tables
+      })
     } catch (error) {
       res.status(500).json({
-        error: error.message,
-      });
+        error: error.message
+      })
     }
-  },
-};
+  }
+}
 
 module.exports = {
   hello,
   timestamp,
   greetings,
-  searchTables,
-};
-
+  searchTables
+}
 ```
 
 Alright, now we can test if the extension is working:

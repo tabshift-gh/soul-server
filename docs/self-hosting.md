@@ -22,14 +22,14 @@ In this guide, we will demonstrate how to host a static `React Admin` applicatio
 
    ```js
    const reactAdminApp = {
-     method: "GET",
-     path: "/api/client",
+     method: 'GET',
+     path: '/api/client',
      handler: (req, res, db) => {
-       const clientPath = path.join(__dirname, "../dist", "index.html");
-       res.app.use(express.static(path.join(__dirname, "../dist")));
-       res.sendFile(clientPath);
-     },
-   };
+       const clientPath = path.join(__dirname, '../dist', 'index.html')
+       res.app.use(express.static(path.join(__dirname, '../dist')))
+       res.sendFile(clientPath)
+     }
+   }
    ```
 
 3. Build your React Admin client:

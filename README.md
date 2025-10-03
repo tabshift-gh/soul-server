@@ -18,8 +18,8 @@ Using the following Dockerfile:
 
 <details>
   <summary>Dockerfile</summary>
-  
-  ```nginx
+
+```nginx
 # node:19-alpine amd64
 FROM node@sha256:d0ba7111bc031323ce2706f8e424afc868db289ba40ff55b05561cf59c123be1 AS node
 
@@ -34,7 +34,8 @@ RUN apk update && apk add python3=3.11.10-r1 build-base=0.5-r3 && npm ci
 COPY . .
 
 CMD [ "npm", "start" ]
-  ```
+```
+
 </details>
 
 You can proceed [to building the application](https://docs.docker.com/get-started/workshop/02_our_app/#build-the-apps-image).

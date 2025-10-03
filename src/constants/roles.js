@@ -1,3 +1,3 @@
 module.exports = {
-  DEFAULT_ROLE: 'default',
-};
+	DEFAULT_ROLE: 'default'
+}
