@@ -31,21 +31,21 @@ ENV NODE_ENV="production"
 
 COPY package-lock.json package.json ./
 
-RUN apk update && apk add python3=3.11.10-r1 build-base=0.5-r3 && npm ci
+RUN apk update && apk add python3=3.11.10-r1 build-base=0.5-r3 && pnpm i
 
 COPY . .
 
-CMD [ "npm", "start" ]
+CMD [ "pnpm", "start" ]
 ```
 
 </details>
 
 You can proceed [to building the application](https://docs.docker.com/get-started/workshop/02_our_app/#build-the-apps-image).
 
-### npm
+### pnpm
 
 ```bash
-  npm install -g soul-cli
+  pnpm install -g @tabshift/soul-cli
 ```
 
 ### 1. Running Soul
@@ -180,8 +180,8 @@ git clone https://github.com/thevahidal/soul # Clone project
 cp .env.sample .env # Duplicate sample environment variables
 vim .env # Update the environment variables
 
-npm install # Install dependencies
-npm run dev # Start the dev server
+pnpm install # Install dependencies
+pnpm run dev # Start the dev server
 ```
 
 ## Testing
@@ -193,7 +193,7 @@ npm run dev # Start the dev server
 5. Use the following command to run the tests:
 
 ```
- npm run test
+ pnpm run test
 ```
 
 Make sure to replace the placeholders with the appropriate values for your environment.
