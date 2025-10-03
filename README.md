@@ -6,7 +6,7 @@
 </p>
 
 > [!NOTE]
-> This repository is a fork of [thevahidal/soul][]. A
+> This repository is a fork of [thevahidal/soul][].
 
 [thevahidal/soul]: https://github.com/thevahidal/soul
 
